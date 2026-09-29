@@ -11,11 +11,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from .schemas import EnergySignal, Factor, SignalInput
+from .schemas import Factor, SignalInput
 from .synthetic import FEATURES, generate_training_data
 
 
-MODEL_VERSION = "1.0.0"
+MODEL_VERSION = "1.1.0"
 
 
 @dataclass(frozen=True)
@@ -23,8 +23,7 @@ class Prediction:
     label: str
     confidence: float
     score: float
-    energy_signal: EnergySignal
-    fatigue_signal: float
+    signal_quality: float
     factors: list[Factor]
 
 
@@ -83,24 +82,25 @@ class FocusModel:
         label_index = int(np.argmax(probabilities))
         label = str(classifier.classes_[label_index])
         confidence = float(probabilities[label_index])
-        focused_index = int(np.where(classifier.classes_ == "focused")[0][0])
-        neutral_index = int(np.where(classifier.classes_ == "neutral")[0][0])
-        score = float(probabilities[focused_index] + probabilities[neutral_index] * 0.5)
-
-        fatigue = self._fatigue_signal(signal)
-        if fatigue >= 0.64:
-            energy: EnergySignal = "fatigue-signal"
-        elif signal.mouth_activity > 0.68 or signal.hand_activity > 0.76:
-            energy = "elevated"
-        else:
-            energy = "steady"
+        stable_index = int(np.where(classifier.classes_ == "stable")[0][0])
+        variable_index = int(np.where(classifier.classes_ == "variable")[0][0])
+        score = float(probabilities[stable_index] + probabilities[variable_index] * 0.5)
+        quality = float(
+            np.clip(
+                0.55 * signal.face_presence
+                + 0.20 * signal.framing_stability
+                + 0.15 * signal.head_alignment
+                + 0.10 * signal.gaze_stability,
+                0.0,
+                1.0,
+            )
+        )
 
         return Prediction(
             label=label,
             confidence=round(confidence, 4),
             score=round(score, 4),
-            energy_signal=energy,
-            fatigue_signal=round(fatigue, 4),
+            signal_quality=round(quality, 4),
             factors=self._explain(row, label_index),
         )
 
@@ -118,14 +118,3 @@ class FocusModel:
             )
             for index in ranked
         ]
-
-    @staticmethod
-    def _fatigue_signal(signal: SignalInput) -> float:
-        blink_deviation = min(abs(signal.blink_rate - 17.0) / 35.0, 1.0)
-        value = (
-            0.38 * (1.0 - signal.eye_openness)
-            + 0.24 * blink_deviation
-            + 0.20 * signal.mouth_activity
-            + 0.18 * (1.0 - signal.posture_stability)
-        )
-        return float(np.clip(value, 0.0, 1.0))

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="FocusLens privacy-first explainable engagement analytics demo" />
+    <meta name="description" content="FocusLens privacy-first on-device session-signal analytics demo" />
     <title>FocusLens AI</title>
     <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/static/styles.css" />
@@ -15,7 +15,8 @@
         <span>FocusLens</span>
       </a>
       <nav aria-label="Project links">
-        <a href="#lab">Signal lab</a>
+        <a href="#camera-lab">Camera demo</a>
+        <a href="#signals">Signals</a>
         <a href="#privacy">Privacy</a>
         <a href="/docs">API docs</a>
       </nav>
@@ -24,43 +25,74 @@
 
     <main>
       <section class="hero">
-        <div class="eyebrow"><span>●</span> Responsible AI portfolio system</div>
-        <h1>Useful signals.<br /><em>Zero images retained.</em></h1>
+        <div class="eyebrow"><span>●</span> Private, adult self-use demo</div>
+        <h1>Camera insights.<br /><em>Frames stay local.</em></h1>
         <p class="hero-copy">
-          FocusLens demonstrates explainable ML for engagement analytics using numeric observations only.
-          Raw camera frames, identities, and biometric templates never enter the API.
+          FocusLens measures observable stability signals during a voluntary 10-second webcam session.
+          MediaPipe runs in your browser; only a numeric summary reaches the FastAPI model.
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="#lab">Open signal lab <span>→</span></a>
+          <a class="button primary" href="#camera-lab">Try the private demo <span>→</span></a>
           <a class="button secondary" href="/api/v1/model-card">Read model card</a>
         </div>
         <div class="trust-row" aria-label="Privacy guarantees">
-          <span>✓ Synthetic training data</span>
-          <span>✓ Consent required</span>
-          <span>✓ Explainable output</span>
+          <span>✓ No recording</span>
+          <span>✓ No identity recognition</span>
+          <span>✓ Camera stops automatically</span>
         </div>
       </section>
 
       <section class="architecture" aria-label="Processing architecture">
         <div class="arch-copy">
           <span class="section-number">01 / Architecture</span>
-          <h2>Designed around data minimization</h2>
-          <p>Only normalized numeric features cross the boundary. Persistence is off by default.</p>
+          <h2>Useful measurement without uploading video</h2>
+          <p>The vision model executes on-device. Raw frames never enter the API, database, or logs.</p>
         </div>
-        <div class="flow" role="img" aria-label="Local feature extraction to API to explainable result">
-          <article><b>01</b><strong>Local signals</strong><small>Derived on device</small></article>
+        <div class="flow" role="img" aria-label="Browser camera processing to numeric API to explainable result">
+          <article><b>01</b><strong>Browser camera</strong><small>10-second opt-in session</small></article>
           <span class="flow-arrow">→</span>
-          <article><b>02</b><strong>ML inference</strong><small>Numeric vectors only</small></article>
+          <article><b>02</b><strong>Local extraction</strong><small>MediaPipe landmarks</small></article>
           <span class="flow-arrow">→</span>
-          <article><b>03</b><strong>Explanation</strong><small>Factors, not faces</small></article>
+          <article><b>03</b><strong>Numeric ML API</strong><small>Score plus factors</small></article>
         </div>
       </section>
 
-      <section class="lab" id="lab">
+      <section class="camera-lab" id="camera-lab">
         <div class="lab-heading">
           <div>
-            <span class="section-number">02 / Interactive demo</span>
-            <h2>Signal lab</h2>
+            <span class="section-number">02 / Private camera demo</span>
+            <h2>Measure a session</h2>
+          </div>
+          <span class="local-only">Processed in this browser</span>
+        </div>
+        <div class="camera-grid">
+          <div class="camera-frame">
+            <video id="camera-preview" muted playsinline aria-label="Local camera preview"></video>
+            <div class="camera-placeholder">
+              <span class="camera-icon" aria-hidden="true"></span>
+              <strong>Camera is off</strong>
+              <small>No permission is requested until you press Start.</small>
+            </div>
+            <div class="progress-track"><span id="camera-progress"></span></div>
+          </div>
+          <div class="camera-copy">
+            <span class="overline">How it works</span>
+            <h3>Ten seconds, then the camera stops.</h3>
+            <p>Landmarks are calculated locally and immediately reduced to eight numbers. No screenshot, frame, face template, audio, or identity is transmitted.</p>
+            <div class="camera-controls">
+              <button class="button primary" id="camera-start" type="button">Start 10-second measurement</button>
+              <button class="button secondary" id="camera-stop" type="button" disabled>Stop camera</button>
+            </div>
+            <p class="camera-status" id="camera-status" aria-live="polite">Confirm the safeguards below before starting.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="lab" id="signals">
+        <div class="lab-heading">
+          <div>
+            <span class="section-number">03 / Numeric signal lab</span>
+            <h2>Inspect every input</h2>
           </div>
           <button class="text-button" id="randomize" type="button">Generate synthetic sample ↻</button>
         </div>
@@ -69,42 +101,47 @@
           <form class="signal-panel" id="signal-form">
             <div class="panel-top">
               <div>
-                <span class="overline">Input vector</span>
+                <span class="overline">Transparent input vector</span>
                 <h3>Observable metrics</h3>
               </div>
-              <span class="privacy-pill">No media</span>
+              <span class="privacy-pill">Numbers only</span>
             </div>
+            <p class="panel-intro">Camera measurements appear here live. You can also adjust them manually or generate a synthetic sample.</p>
             <div id="sliders"></div>
             <label class="consent-row">
-              <input id="consent" type="checkbox" checked />
-              <span><strong>Authorized demo signal</strong><small>I confirm this synthetic/local input is permitted.</small></span>
+              <input id="consent" type="checkbox" />
+              <span><strong>Voluntary and authorized</strong><small>I understand this is a short experimental measurement.</small></span>
+            </label>
+            <label class="consent-row compact">
+              <input id="adult-self-use" type="checkbox" />
+              <span><strong>Adult self-use only</strong><small>I am 18+ and I am analyzing only myself.</small></span>
             </label>
             <label class="persist-row">
               <input id="persist" type="checkbox" />
-              <span>Persist numeric result locally</span>
+              <span>Persist the numeric result locally (off by default)</span>
             </label>
-            <button class="button primary analyze" type="submit">Analyze signals <span>→</span></button>
+            <button class="button primary analyze" id="analyze-button" type="submit">Analyze numeric signals <span>→</span></button>
           </form>
 
           <div class="result-panel" aria-live="polite">
             <div class="panel-top">
               <div>
                 <span class="overline">Explainable output</span>
-                <h3>Analysis result</h3>
+                <h3>Session result</h3>
               </div>
-              <span class="live-pill"><i></i> Live</span>
+              <span class="live-pill"><i></i> Numeric ML</span>
             </div>
             <div class="score-wrap">
-              <div class="score-ring" id="score-ring"><span id="score">--</span><small>attention</small></div>
+              <div class="score-ring" id="score-ring"><span id="score">--</span><small>stability</small></div>
               <div class="verdict">
-                <span>Classification</span>
+                <span>Session classification</span>
                 <strong id="label">Awaiting input</strong>
-                <small id="confidence">Run an analysis to begin</small>
+                <small id="confidence">Run a measurement or manual analysis</small>
               </div>
             </div>
             <div class="signal-cards">
-              <article><span>Energy signal</span><strong id="energy">—</strong></article>
-              <article><span>Fatigue indicator</span><strong id="fatigue">—</strong></article>
+              <article><span>Signal quality</span><strong id="quality">—</strong></article>
+              <article><span>Input source</span><strong id="source">—</strong></article>
             </div>
             <div class="factors">
               <span class="overline">Leading factors</span>
@@ -112,17 +149,17 @@
                 <li><span>Explanations appear here</span><b>—</b></li>
               </ol>
             </div>
-            <p class="disclaimer">Demonstration output only. Never use this system to grade, discipline, diagnose, identify, or rank a person.</p>
+            <p class="disclaimer">This is a synthetic-model engineering demo, not a measure of attention, productivity, emotion, intent, or health. Never use it to evaluate another person.</p>
           </div>
         </div>
       </section>
 
       <section class="privacy" id="privacy">
-        <span class="section-number">03 / Responsible use</span>
+        <span class="section-number">04 / Responsible use</span>
         <div class="privacy-grid">
-          <h2>The strongest feature is what the system refuses to collect.</h2>
+          <h2>Observable signals, not claims about the person.</h2>
           <div>
-            <p>FocusLens intentionally has no image-upload field, no identity model, and no demographic attributes. Validation rejects unknown fields before inference.</p>
+            <p>FocusLens reports short-window signal stability. It refuses image uploads and identity fields, requires explicit adult self-use confirmation, and stores nothing unless numeric persistence is selected.</p>
             <a href="/api/v1/model-card">Inspect the machine-readable model card →</a>
           </div>
         </div>
@@ -130,9 +167,9 @@
     </main>
 
     <footer>
-      <span>FocusLens AI · Privacy-first ML engineering</span>
-      <span>FastAPI · scikit-learn · Docker</span>
+      <span>FocusLens AI · Private on-device vision engineering</span>
+      <span>MediaPipe · FastAPI · scikit-learn · Docker</span>
     </footer>
-    <script src="/static/app.js" defer></script>
+    <script type="module" src="/static/app.js"></script>
   </body>
 </html>

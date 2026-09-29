@@ -2,31 +2,43 @@
 
 ## Model details
 
-- **Name:** FocusLens engagement classifier
-- **Version:** 1.0.0
+- **Name:** FocusLens session-stability classifier
+- **Version:** 1.1.0
 - **Type:** standardized multinomial logistic regression
 - **Framework:** scikit-learn
 - **Artifact policy:** generated locally; never committed
 
+## Intended use
+
+FocusLens demonstrates an end-to-end, privacy-aware computer-vision and ML architecture for voluntary adult self-reflection. It classifies a short numeric observation window according to patterns defined by the synthetic generator.
+
+It is not intended to measure attention, productivity, emotion, intent, fatigue, truthfulness, ability, or health.
+
 ## Inputs
 
-Eight bounded numeric features: eye openness, gaze stability, head alignment, blink rate, mouth activity, face presence, hand activity, and posture stability.
+Eight bounded numeric features: eye openness, gaze stability, head alignment, blink rate, mouth activity, face presence, movement level, and framing stability. Inputs may come from the local browser camera pipeline, manual sliders, or the synthetic-sample generator.
 
 ## Outputs
 
-- demonstration label: `focused`, `neutral`, or `distracted`;
-- normalized attention score and confidence;
-- non-diagnostic energy and fatigue signals;
+- synthetic session label: `stable`, `variable`, or `interrupted`;
+- normalized stability score and class confidence;
+- signal-quality estimate based on observable input quality;
 - three leading signed feature contributions.
 
-## Training data
+## Training and evaluation
 
-The repository generates deterministic synthetic observations with a fixed random seed. It contains no photographs, videos, biometric identifiers, or personal records.
+The repository generates deterministic synthetic observations with a fixed random seed. Accuracy and macro F1 are calculated on a stratified synthetic holdout set and embedded in the generated artifact.
 
-## Evaluation
+These metrics measure implementation consistency with synthetic labeling rules only. They are not evidence of real-world validity, fairness, or human-state inference.
 
-Accuracy and macro F1 are calculated on a stratified synthetic holdout set and embedded in the generated artifact. These metrics measure implementation consistency only and must not be interpreted as evidence of real-world human-state inference.
+## Limitations
 
-## Ethical limitations
+- Webcam measurements vary with lighting, pose, eyewear, occlusion, camera quality, frame rate, and device performance.
+- Iris and blendshape stability are observable geometry, not proof of attention or intent.
+- Blink-rate extrapolation from a 10-second window is especially noisy.
+- The synthetic model has not been validated on people or populations.
+- A high confidence value means confidence relative to synthetic classes, not confidence about a person.
 
-The model must not be used for consequential decisions, covert surveillance, identity recognition, or monitoring children. See [responsible-ai.md](responsible-ai.md).
+## Prohibited use
+
+Do not use this model for surveillance, children, students, employees, patients, grading, discipline, hiring, diagnosis, safety, identity recognition, or any consequential decision. See [responsible-ai.md](responsible-ai.md).

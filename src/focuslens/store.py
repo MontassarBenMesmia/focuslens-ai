@@ -26,14 +26,13 @@ class ObservationStore:
         with self._connect() as connection:
             connection.execute(
                 """
-                CREATE TABLE IF NOT EXISTS observations (
+                CREATE TABLE IF NOT EXISTS session_observations (
                     id TEXT PRIMARY KEY,
                     processed_at TEXT NOT NULL,
-                    attention_label TEXT NOT NULL,
+                    session_label TEXT NOT NULL,
                     confidence REAL NOT NULL,
-                    attention_score REAL NOT NULL,
-                    energy_signal TEXT NOT NULL,
-                    fatigue_signal REAL NOT NULL,
+                    stability_score REAL NOT NULL,
+                    signal_quality REAL NOT NULL,
                     numeric_features TEXT NOT NULL
                 )
                 """
@@ -44,33 +43,31 @@ class ObservationStore:
         signal: SignalInput,
         label: str,
         confidence: float,
-        attention_score: float,
-        energy_signal: str,
-        fatigue_signal: float,
+        stability_score: float,
+        signal_quality: float,
         processed_at: datetime,
     ) -> str:
         observation_id = str(uuid4())
         numeric_features = {
             name: value
             for name, value in signal.model_dump().items()
-            if name not in {"consent_confirmed", "persist"}
+            if name not in {"consent_confirmed", "adult_self_use_confirmed", "persist"}
         }
         with self._lock, self._connect() as connection:
             connection.execute(
                 """
-                INSERT INTO observations (
-                    id, processed_at, attention_label, confidence,
-                    attention_score, energy_signal, fatigue_signal, numeric_features
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO session_observations (
+                    id, processed_at, session_label, confidence,
+                    stability_score, signal_quality, numeric_features
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     observation_id,
                     processed_at.astimezone(UTC).isoformat(),
                     label,
                     confidence,
-                    attention_score,
-                    energy_signal,
-                    fatigue_signal,
+                    stability_score,
+                    signal_quality,
                     json.dumps(numeric_features, separators=(",", ":")),
                 ),
             )
@@ -81,17 +78,17 @@ class ObservationStore:
             aggregate = connection.execute(
                 """
                 SELECT COUNT(*) AS total,
-                       COALESCE(AVG(attention_score), 0) AS average_score,
+                       COALESCE(AVG(stability_score), 0) AS average_score,
                        MAX(processed_at) AS latest
-                FROM observations
+                FROM session_observations
                 """
             ).fetchone()
             label_rows = connection.execute(
-                "SELECT attention_label, COUNT(*) AS count FROM observations GROUP BY attention_label"
+                "SELECT session_label, COUNT(*) AS count FROM session_observations GROUP BY session_label"
             ).fetchall()
         return Summary(
             persisted_observations=int(aggregate["total"]),
-            average_attention_score=round(float(aggregate["average_score"]), 4),
-            label_counts={row["attention_label"]: int(row["count"]) for row in label_rows},
+            average_stability_score=round(float(aggregate["average_score"]), 4),
+            label_counts={row["session_label"]: int(row["count"]) for row in label_rows},
             latest_processed_at=(datetime.fromisoformat(aggregate["latest"]) if aggregate["latest"] else None),
         )

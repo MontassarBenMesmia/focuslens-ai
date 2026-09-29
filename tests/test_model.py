@@ -16,14 +16,16 @@ def test_model_trains_and_explains_prediction(tmp_path: Path) -> None:
             blink_rate=17,
             mouth_activity=0.12,
             face_presence=1,
-            hand_activity=0.2,
-            posture_stability=0.86,
+            movement_level=0.2,
+            framing_stability=0.86,
             consent_confirmed=True,
+            adult_self_use_confirmed=True,
         )
     )
 
     assert artifact.exists()
     assert metrics["accuracy"] > 0.6
-    assert result.label in {"focused", "neutral", "distracted"}
+    assert result.label in {"stable", "variable", "interrupted"}
     assert 0 <= result.score <= 1
+    assert 0 <= result.signal_quality <= 1
     assert len(result.factors) == 3

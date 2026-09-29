@@ -10,11 +10,11 @@ FEATURES = [
     "blink_rate",
     "mouth_activity",
     "face_presence",
-    "hand_activity",
-    "posture_stability",
+    "movement_level",
+    "framing_stability",
 ]
 
-LABELS = np.array(["distracted", "neutral", "focused"])
+LABELS = np.array(["interrupted", "variable", "stable"])
 
 
 def generate_training_data(samples: int = 8_000, seed: int = 42) -> tuple[np.ndarray, np.ndarray]:
@@ -27,8 +27,8 @@ def generate_training_data(samples: int = 8_000, seed: int = 42) -> tuple[np.nda
     blink_rate = rng.normal(17.0, 7.0, samples).clip(0, 60)
     mouth_activity = rng.beta(2.0, 5.0, samples)
     face_presence = rng.binomial(1, 0.94, samples).astype(float)
-    hand_activity = rng.beta(2.3, 4.2, samples)
-    posture_stability = rng.beta(3.7, 2.0, samples)
+    movement_level = rng.beta(2.3, 4.2, samples)
+    framing_stability = rng.beta(3.7, 2.0, samples)
 
     matrix = np.column_stack(
         [
@@ -38,8 +38,8 @@ def generate_training_data(samples: int = 8_000, seed: int = 42) -> tuple[np.nda
             blink_rate,
             mouth_activity,
             face_presence,
-            hand_activity,
-            posture_stability,
+            movement_level,
+            framing_stability,
         ]
     )
     blink_balance = 1.0 - np.clip(np.abs(blink_rate - 17.0) / 30.0, 0.0, 1.0)
@@ -50,8 +50,8 @@ def generate_training_data(samples: int = 8_000, seed: int = 42) -> tuple[np.nda
         + 0.08 * blink_balance
         - 0.08 * mouth_activity
         + 0.15 * face_presence
-        - 0.04 * hand_activity
-        + 0.20 * posture_stability
+        - 0.10 * movement_level
+        + 0.19 * framing_stability
         + rng.normal(0.0, 0.075, samples)
     )
     encoded = np.where(latent_score < 0.48, 0, np.where(latent_score < 0.68, 1, 2))

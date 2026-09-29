@@ -21,18 +21,16 @@ class AnalysisService:
                 signal=signal,
                 label=prediction.label,
                 confidence=prediction.confidence,
-                attention_score=prediction.score,
-                energy_signal=prediction.energy_signal,
-                fatigue_signal=prediction.fatigue_signal,
+                stability_score=prediction.score,
+                signal_quality=prediction.signal_quality,
                 processed_at=processed_at,
             )
         return AnalysisResult(
             observation_id=observation_id,
-            attention_label=prediction.label,
+            session_label=prediction.label,
             confidence=prediction.confidence,
-            attention_score=prediction.score,
-            energy_signal=prediction.energy_signal,
-            fatigue_signal=prediction.fatigue_signal,
+            stability_score=prediction.score,
+            signal_quality=prediction.signal_quality,
             factors=prediction.factors,
             model_version=self.model.version,
             processed_at=processed_at,
@@ -43,18 +41,18 @@ class AnalysisService:
 
     def model_card(self) -> ModelCard:
         return ModelCard(
-            name="FocusLens engagement classifier",
+            name="FocusLens session-stability classifier",
             version=self.model.version,
             model_type="standardized multinomial logistic regression",
             training_source="deterministic synthetic observations generated in source code",
             features=self.model.features,
             intended_use=(
-                "Demonstrating privacy-preserving ML system design with numeric signals; "
+                "Adult, voluntary self-reflection on observable webcam-derived session signals; "
                 "not evaluating people or making educational, employment, medical, or safety decisions."
             ),
             limitations=[
                 "Synthetic training data does not represent real-world populations.",
-                "Attention and fatigue cannot be reliably inferred from appearance alone.",
+                "The output describes short-window signal stability, not attention, emotion, intent, or health.",
                 "Predictions must not be used to grade, discipline, rank, identify, or diagnose anyone.",
                 "Performance metrics measure fit to synthetic labels only.",
             ],

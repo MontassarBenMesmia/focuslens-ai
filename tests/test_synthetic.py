@@ -10,4 +10,4 @@ def test_synthetic_generation_is_deterministic() -> None:
     assert first_features.shape == (200, len(FEATURES))
     assert np.array_equal(first_features, second_features)
     assert np.array_equal(first_labels, second_labels)
-    assert set(first_labels).issubset({"focused", "neutral", "distracted"})
+    assert set(first_labels).issubset({"stable", "variable", "interrupted"})

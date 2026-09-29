@@ -24,9 +24,12 @@ def valid_payload() -> dict[str, float | bool]:
         "blink_rate": 16,
         "mouth_activity": 0.18,
         "face_presence": 1,
-        "hand_activity": 0.24,
-        "posture_stability": 0.79,
+        "movement_level": 0.24,
+        "framing_stability": 0.79,
+        "source": "camera",
+        "observation_window_seconds": 10,
         "consent_confirmed": True,
+        "adult_self_use_confirmed": True,
         "persist": False,
     }
 
@@ -40,6 +43,8 @@ def test_health_and_analysis(client: TestClient) -> None:
     assert response.status_code == 200
     assert response.json()["observation_id"] is None
     assert response.json()["privacy"] == "numeric-signals-only"
+    assert response.json()["session_label"] in {"stable", "variable", "interrupted"}
+    assert "attention_label" not in response.json()
 
 
 def test_raw_image_field_is_rejected(client: TestClient) -> None:
@@ -57,6 +62,13 @@ def test_consent_is_required(client: TestClient) -> None:
     assert response.status_code == 422
 
 
+def test_adult_self_use_confirmation_is_required(client: TestClient) -> None:
+    payload = valid_payload() | {"adult_self_use_confirmed": False}
+    response = client.post("/api/v1/analyze", json=payload)
+
+    assert response.status_code == 422
+
+
 def test_persistence_is_explicit_and_numeric_only(client: TestClient) -> None:
     payload = valid_payload() | {"persist": True}
     response = client.post("/api/v1/analyze", json=payload)
@@ -65,6 +77,14 @@ def test_persistence_is_explicit_and_numeric_only(client: TestClient) -> None:
     assert response.status_code == 200
     assert response.json()["observation_id"] is not None
     assert summary.json()["persisted_observations"] == 1
+    assert summary.json()["average_stability_score"] >= 0
+
+
+def test_privacy_headers_restrict_camera_to_same_origin(client: TestClient) -> None:
+    response = client.get("/")
+
+    assert response.headers["permissions-policy"] == "camera=(self)"
+    assert "frame-ancestors 'none'" in response.headers["content-security-policy"]
 
 
 def test_model_card_discloses_limitations(client: TestClient) -> None:

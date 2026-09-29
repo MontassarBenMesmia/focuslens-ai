@@ -32,8 +32,8 @@ app = FastAPI(
     title="FocusLens AI",
     version=__version__,
     description=(
-        "Privacy-first portfolio API for explainable engagement-signal analysis. "
-        "The API accepts numeric features only and never accepts raw images."
+        "Privacy-first portfolio API for explainable session-signal analysis. "
+        "Webcam feature extraction happens in the browser; the API accepts numeric features only."
     ),
     docs_url="/docs",
     redoc_url="/redoc",
@@ -46,6 +46,21 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 app.mount("/static", StaticFiles(directory=str(static_directory)), name="static")
+
+
+@app.middleware("http")
+async def privacy_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Permissions-Policy"] = "camera=(self)"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; "
+        "connect-src 'self' https://cdn.jsdelivr.net https://storage.googleapis.com; "
+        "img-src 'self' data:; media-src 'self' blob:; style-src 'self'; "
+        "worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+    )
+    return response
 
 
 @app.exception_handler(Exception)
