@@ -1,0 +1,18 @@
+services:
+  focuslens:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      FOCUSLENS_ENV: ${FOCUSLENS_ENV:-development}
+      FOCUSLENS_DATABASE_PATH: /app/data/focuslens.db
+      FOCUSLENS_MODEL_PATH: /app/artifacts/focus_model.joblib
+      FOCUSLENS_ALLOWED_ORIGINS: ${FOCUSLENS_ALLOWED_ORIGINS:-http://localhost:8000}
+    volumes:
+      - focuslens-data:/app/data
+      - focuslens-model:/app/artifacts
+    restart: unless-stopped
+
+volumes:
+  focuslens-data:
+  focuslens-model:

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="FocusLens privacy-first explainable engagement analytics demo" />
+    <title>FocusLens AI</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="FocusLens home">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span>FocusLens</span>
+      </a>
+      <nav aria-label="Project links">
+        <a href="#lab">Signal lab</a>
+        <a href="#privacy">Privacy</a>
+        <a href="/docs">API docs</a>
+      </nav>
+      <span class="status"><i></i> Model online</span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow"><span>●</span> Responsible AI portfolio system</div>
+        <h1>Useful signals.<br /><em>Zero images retained.</em></h1>
+        <p class="hero-copy">
+          FocusLens demonstrates explainable ML for engagement analytics using numeric observations only.
+          Raw camera frames, identities, and biometric templates never enter the API.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#lab">Open signal lab <span>→</span></a>
+          <a class="button secondary" href="/api/v1/model-card">Read model card</a>
+        </div>
+        <div class="trust-row" aria-label="Privacy guarantees">
+          <span>✓ Synthetic training data</span>
+          <span>✓ Consent required</span>
+          <span>✓ Explainable output</span>
+        </div>
+      </section>
+
+      <section class="architecture" aria-label="Processing architecture">
+        <div class="arch-copy">
+          <span class="section-number">01 / Architecture</span>
+          <h2>Designed around data minimization</h2>
+          <p>Only normalized numeric features cross the boundary. Persistence is off by default.</p>
+        </div>
+        <div class="flow" role="img" aria-label="Local feature extraction to API to explainable result">
+          <article><b>01</b><strong>Local signals</strong><small>Derived on device</small></article>
+          <span class="flow-arrow">→</span>
+          <article><b>02</b><strong>ML inference</strong><small>Numeric vectors only</small></article>
+          <span class="flow-arrow">→</span>
+          <article><b>03</b><strong>Explanation</strong><small>Factors, not faces</small></article>
+        </div>
+      </section>
+
+      <section class="lab" id="lab">
+        <div class="lab-heading">
+          <div>
+            <span class="section-number">02 / Interactive demo</span>
+            <h2>Signal lab</h2>
+          </div>
+          <button class="text-button" id="randomize" type="button">Generate synthetic sample ↻</button>
+        </div>
+
+        <div class="lab-grid">
+          <form class="signal-panel" id="signal-form">
+            <div class="panel-top">
+              <div>
+                <span class="overline">Input vector</span>
+                <h3>Observable metrics</h3>
+              </div>
+              <span class="privacy-pill">No media</span>
+            </div>
+            <div id="sliders"></div>
+            <label class="consent-row">
+              <input id="consent" type="checkbox" checked />
+              <span><strong>Authorized demo signal</strong><small>I confirm this synthetic/local input is permitted.</small></span>
+            </label>
+            <label class="persist-row">
+              <input id="persist" type="checkbox" />
+              <span>Persist numeric result locally</span>
+            </label>
+            <button class="button primary analyze" type="submit">Analyze signals <span>→</span></button>
+          </form>
+
+          <div class="result-panel" aria-live="polite">
+            <div class="panel-top">
+              <div>
+                <span class="overline">Explainable output</span>
+                <h3>Analysis result</h3>
+              </div>
+              <span class="live-pill"><i></i> Live</span>
+            </div>
+            <div class="score-wrap">
+              <div class="score-ring" id="score-ring"><span id="score">--</span><small>attention</small></div>
+              <div class="verdict">
+                <span>Classification</span>
+                <strong id="label">Awaiting input</strong>
+                <small id="confidence">Run an analysis to begin</small>
+              </div>
+            </div>
+            <div class="signal-cards">
+              <article><span>Energy signal</span><strong id="energy">—</strong></article>
+              <article><span>Fatigue indicator</span><strong id="fatigue">—</strong></article>
+            </div>
+            <div class="factors">
+              <span class="overline">Leading factors</span>
+              <ol id="factors">
+                <li><span>Explanations appear here</span><b>—</b></li>
+              </ol>
+            </div>
+            <p class="disclaimer">Demonstration output only. Never use this system to grade, discipline, diagnose, identify, or rank a person.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="privacy" id="privacy">
+        <span class="section-number">03 / Responsible use</span>
+        <div class="privacy-grid">
+          <h2>The strongest feature is what the system refuses to collect.</h2>
+          <div>
+            <p>FocusLens intentionally has no image-upload field, no identity model, and no demographic attributes. Validation rejects unknown fields before inference.</p>
+            <a href="/api/v1/model-card">Inspect the machine-readable model card →</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>FocusLens AI · Privacy-first ML engineering</span>
+      <span>FastAPI · scikit-learn · Docker</span>
+    </footer>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "focuslens-ai"
+version = "1.0.0"
+description = "Privacy-first, explainable engagement-signal analytics built with FastAPI and scikit-learn."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Montassar Ben Mesmia" }]
+dependencies = [
+  "fastapi==0.141.1",
+  "uvicorn[standard]==0.54.0",
+  "numpy==2.5.3",
+  "scikit-learn==1.9.1",
+  "joblib==1.6.0",
+  "pydantic==2.13.5",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.4.2",
+  "httpx2==2.13.1",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+focuslens = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
