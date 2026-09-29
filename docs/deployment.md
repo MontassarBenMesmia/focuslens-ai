@@ -6,6 +6,8 @@ FocusLens is packaged as one stateless Docker web service. The browser UI and AP
 
 The repository includes [`render.yaml`](../render.yaml), which defines a free Docker web service with automatic deployment after GitHub checks pass and an application-level health check at `/api/health`.
 
+The verified public deployment is available at <https://focuslens-ai-le74.onrender.com>.
+
 1. Sign in to Render with GitHub.
 2. Create a Blueprint from this repository.
 3. Review the free plan and apply the Blueprint.

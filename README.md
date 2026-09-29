@@ -1,12 +1,15 @@
 # FocusLens AI
 
 [![CI](https://github.com/MontassarBenMesmia/focuslens-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/MontassarBenMesmia/focuslens-ai/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/live_demo-Render-46E3B7?logo=render&logoColor=black)](https://focuslens-ai-le74.onrender.com)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Container](https://img.shields.io/badge/container-published-2496ED?logo=docker&logoColor=white)](https://github.com/MontassarBenMesmia/focuslens-ai/actions/workflows/container-publish.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-16332b.svg)](LICENSE)
 
 Privacy-first, end-to-end webcam signal extraction and explainable session analytics.
+
+**[Open the live HTTPS demo](https://focuslens-ai-le74.onrender.com)** — no account, API key, or upload is required. The free demo can take about a minute to wake after inactivity.
 
 FocusLens runs a voluntary 10-second webcam measurement for adult self-use. MediaPipe Face Landmarker processes frames inside the browser and reduces them to eight bounded numeric signals. Only that numeric summary reaches the FastAPI service; frames, photographs, audio, identities, and biometric templates are never uploaded or stored.
 
