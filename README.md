@@ -3,7 +3,7 @@
 [![CI](https://github.com/MontassarBenMesmia/focuslens-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/MontassarBenMesmia/focuslens-ai/actions/workflows/ci.yml)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Container](https://img.shields.io/badge/GHCR-container-2496ED?logo=docker&logoColor=white)](https://github.com/MontassarBenMesmia/focuslens-ai/pkgs/container/focuslens-ai)
+[![Container](https://img.shields.io/badge/container-published-2496ED?logo=docker&logoColor=white)](https://github.com/MontassarBenMesmia/focuslens-ai/actions/workflows/container-publish.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-16332b.svg)](LICENSE)
 
 Privacy-first, end-to-end webcam signal extraction and explainable session analytics.
@@ -90,6 +90,8 @@ docker compose up --build
 ```
 
 Open http://localhost:8000. Browser camera APIs work on `localhost`; a remote deployment must use HTTPS.
+
+For a reproducible HTTPS deployment, see the [deployment guide](docs/deployment.md). The included Render Blueprint deploys the same tested Docker configuration without requiring application secrets.
 
 Other endpoints:
 

@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: focuslens-ai
+    runtime: docker
+    plan: free
+    repo: https://github.com/MontassarBenMesmia/focuslens-ai
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: FOCUSLENS_ENV
+        value: production
+      - key: FOCUSLENS_DATABASE_PATH
+        value: /tmp/focuslens.db
+      - key: FOCUSLENS_MODEL_PATH
+        value: /tmp/focus_model.joblib

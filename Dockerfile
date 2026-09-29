@@ -21,6 +21,6 @@ USER focuslens
 EXPOSE 8000
 
 HEALTHCHECK --interval=15s --timeout=3s --start-period=20s --retries=3 \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=2)"
+  CMD python -c "import os, urllib.request; urllib.request.urlopen('http://localhost:' + os.getenv('PORT', '8000') + '/api/health', timeout=2)"
 
-CMD ["uvicorn", "focuslens.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn focuslens.api:app --host 0.0.0.0 --port ${PORT:-8000}"]
