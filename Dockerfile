@@ -1,5 +1,9 @@
 FROM python:3.12-slim
 
+LABEL org.opencontainers.image.source="https://github.com/MontassarBenMesmia/focuslens-ai" \
+      org.opencontainers.image.description="Privacy-first on-device webcam signal analytics" \
+      org.opencontainers.image.licenses="MIT"
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     FOCUSLENS_ENV=production \
