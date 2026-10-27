@@ -1,4 +1,6 @@
 FROM python:3.12-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 LABEL org.opencontainers.image.source="https://github.com/MontassarBenMesmia/focuslens-ai" \
       org.opencontainers.image.description="Privacy-first on-device webcam signal analytics" \
